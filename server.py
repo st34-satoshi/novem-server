@@ -40,9 +40,10 @@ async def server(websocket, path):
         await websocket.send(action_event())
         async for message in websocket:  # receive message
             data = json.loads(message)
-            if data[""] == "":
-                pass
-                # await fun()
+            print(f'receive data = {data}')
+            # if data[""] == "":
+            #     pass
+            #     # await fun()
     finally:
         await unregister(websocket)
 
