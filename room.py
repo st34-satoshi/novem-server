@@ -37,7 +37,9 @@ class Room:
         return True
 
     def all_players(self):
-        players = self.players[PlayerType.Viewer]
+        players = []
+        for player in self.players[PlayerType.Viewer]:
+            players.append(player)
         if self.players[PlayerType.Row] is not None:
             players.append(self.players[PlayerType.Row])
         if self.players[PlayerType.Column] is not None:
@@ -86,5 +88,5 @@ class Room:
         if self.players[PlayerType.Column] is not None:
             await asyncio.wait([self.players[PlayerType.Column].websocket.send(self.playing_information("Column"))])
         message = self.playing_information("Viewer")
-        if len(self.players[PlayerType.Viewer]) > 1:
+        if len(self.players[PlayerType.Viewer]) > 0:
             await asyncio.wait([player.websocket.send(message) for player in self.players[PlayerType.Viewer]])
