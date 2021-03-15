@@ -31,26 +31,33 @@ def error_response(message=""):
     return json.dumps({"action": "error", "message": message})
 
 
-async def notify_action():
-    pass
-    # # TODO:
-    # if USERS:
-    #     message = action_event()
-    #     await asyncio.wait([user.send(message) for user in USERS])
-
-
 async def send_error(websocket, message=""):
     await asyncio.wait([websocket.send(error_response(message))])
 
 
-async def send_room_link(room_id, player_type, websocket):
-    # type is Row, Column, or Viewer
-    if player_type not in PlayerType:
-        logging.error(f"unexpected player type. {player_type}")
-        await send_error(websocket)
+async def play_action(websocket, data):
+    if "room_id" not in data:
+        logging.error(f"No room id in data when next action. {data}")
+        await send_error(websocket, "no room id")
         return
-    message = room_response(room_id, player_type)
-    await asyncio.wait([websocket.send(message)])
+    room_id = data["room_id"]
+    if "play_action" not in data:
+        logging.error(f"No play action in data when next action. {data}")
+        await send_error(websocket, "no play_action")
+        return
+    action = data["play_action"]
+
+    if room_id not in ROOMS:
+        await send_error(websocket, "room id is wrong")
+        return
+    room = ROOMS[room_id]
+    if websocket not in PLAYERS:
+        await send_error(websocket, "No player")
+        logging.error("This player does not exist.")
+        return
+    player = PLAYERS[websocket]
+
+    await room.next_action(player, action)
 
 
 async def send_rooms_list(websocket=None):
@@ -180,6 +187,8 @@ async def server(websocket, path):
                 await make_room(websocket, data)
             elif data["action"] == "join-room":
                 await join_room(websocket, data)
+            elif data["action"] == "play-action":
+                await play_action(websocket, data)
             else:
                 logging.error(f"Unexpected action request. {data}")
     finally:

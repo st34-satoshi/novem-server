@@ -13,10 +13,14 @@ class Room:
 
         # board information
         self.round = 0
-        self.row_point = handicap
+        self.row_point = int(handicap)
         self.column_point = 0
         self.board_bottom = [[1, 5, 9], [6, 7, 2], [8, 3, 4]]
         self.board_top = [[9, 5, 1], [4, 3, 8], [2, 7, 6]]
+
+        # next action. action is 0, 1, or 2. This is the index.
+        self.row_action = None
+        self.column_action = None
 
     def remove_player(self, player):
         if self.players[PlayerType.Row] is player:
@@ -98,3 +102,59 @@ class Room:
         message = self.playing_information("Viewer")
         if len(self.players[PlayerType.Viewer]) > 0:
             await asyncio.wait([player.websocket.send(message) for player in self.players[PlayerType.Viewer]])
+
+    async def next_action(self, player, action):
+        """
+        :param player:
+        :param action: r3, r2, ..., c1.
+        :return:
+        If correct player, correct action --> set this action
+        else --> ignore
+        When both Row and Column actions are decided --> move to next state and broadcast
+        """
+        if len(action) != 2:
+            return
+        # check player
+        if action[0] == 'r':
+            if self.players[PlayerType.Row] is not player:
+                return
+        elif action[0] == 'c':
+            if self.players[PlayerType.Column] is not player:
+                return
+        else:
+            return
+        # player is correct
+
+        # check action
+        if action[1] not in ["1", "2", "3"]:
+            return
+        # action is correct
+
+        # set the action
+        if action[0] == "r":
+            self.row_action = int(action[1]) - 1
+        else:
+            self.column_action = int(action[1]) - 1
+
+        # move to next state and broadcast
+        if self.row_action is not None and self.column_action is not None:
+            # update the board
+            tile = 0
+            if self.board_top[self.row_action][self.column_action] != 0:
+                tile = self.board_top[self.row_action][self.column_action]
+                self.board_top[self.row_action][self.column_action] = 0
+            elif self.board_bottom[self.row_action][self.column_action] != 0:
+                tile = self.board_bottom[self.row_action][self.column_action]
+                self.board_bottom[self.row_action][self.column_action] = 0
+            # update the point
+            if self.round % 2 == 0:
+                self.row_point += tile
+            else:
+                self.column_point += tile
+            # update the round
+            self.round += 1
+            # reset next action
+            self.row_action = None
+            self.column_action = None
+            # broadcast
+            await self.send_playing()
