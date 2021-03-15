@@ -89,18 +89,63 @@ async def make_room(websocket, data):
 
     # set name
     if player_name is not None:
-        if player_name is "None":  # None is not allowed
+        if player_name == "None":  # None is not allowed
             player_name = "None1"
         player.name = player_name
 
     # make a room
-    room = Room(len(ROOMS)+1, player_handicap)
+    room = Room(str(len(ROOMS)+1), player_handicap)
     ROOMS[room.room_id] = room
 
     # add the player to the room
     ok = room.add_player(player, player_type)
     if not ok:
         send_error(websocket)
+        return
+
+    # Send the play information
+    await room.send_playing()
+
+
+async def join_room(websocket, data):
+    # handle data
+    if "player_type" not in data:
+        logging.error(f"No player_type in data when joining room. {data}")
+        await send_error(websocket)
+        return
+    player_type = PlayerType(data["player_type"])
+    if "room_id" not in data:
+        logging.error(f"No room id in data when joining room. {data}")
+        await send_error(websocket)
+        return
+    room_id = data["room_id"]
+    if "name" not in data:
+        logging.error(f"No name in data when joining room. {data}")
+        player_name = None
+    else:
+        player_name = data["name"]
+    if websocket not in PLAYERS:
+        logging.error(f"No player {websocket} when joining room. {data}")
+        await send_error(websocket)
+        return
+    player = PLAYERS[websocket]
+
+    # set name
+    if player_name is not None:
+        if player_name == "None":  # None is not allowed
+            player_name = "None1"
+        player.name = player_name
+
+    if room_id not in ROOMS:
+        logging.error(f"No room id in ROOMS when joining room. {data}")
+        await send_error(websocket, "no room id in Rooms joining room")
+        return
+    room = ROOMS[room_id]
+
+    # add the player to the room
+    ok = room.add_player(player, player_type)
+    if not ok:
+        send_error(websocket, "This player cannot join the room.")
         return
 
     # Send the play information
@@ -133,6 +178,8 @@ async def server(websocket, path):
                 continue
             if data["action"] == "make-room":
                 await make_room(websocket, data)
+            elif data["action"] == "join-room":
+                await join_room(websocket, data)
             else:
                 logging.error(f"Unexpected action request. {data}")
     finally:
