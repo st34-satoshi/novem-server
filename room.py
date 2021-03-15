@@ -13,7 +13,7 @@ class Room:
 
         # board information
         self.round = 0
-        self.row_point = 0
+        self.row_point = handicap
         self.column_point = 0
         self.board_bottom = [[1, 5, 9], [6, 7, 2], [8, 3, 4]]
         self.board_top = [[9, 5, 1], [4, 3, 8], [2, 7, 6]]
