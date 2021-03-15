@@ -66,7 +66,7 @@ class Room:
             return self.players[PlayerType.Column].name
         return "None"
 
-    def playing_information(self):
+    def playing_information(self, player_type):
         # Information: room id, board, round, point, and player name.
         return json.dumps({"action": "playing",
                            "room_id": self.room_id,
@@ -75,10 +75,16 @@ class Room:
                            "row_point": self.row_point,
                            "column_point": self.column_point,
                            "row_name": self.row_name(),
-                           "column_name": self.column_name()})
+                           "column_name": self.column_name(),
+                           "type": player_type})
 
     async def send_playing(self):
         # Send all information of this state to all players in this room.
         # Information: room id, board, round, point, and player name.
-        message = self.playing_information()
-        await asyncio.wait([player.websocket.send(message) for player in self.all_players()])
+        if self.players[PlayerType.Row] is not None:
+            await asyncio.wait([self.players[PlayerType.Row].websocket.send(self.playing_information("Row"))])
+        if self.players[PlayerType.Column] is not None:
+            await asyncio.wait([self.players[PlayerType.Column].websocket.send(self.playing_information("Column"))])
+        message = self.playing_information("Viewer")
+        if len(self.players[PlayerType.Viewer]) > 1:
+            await asyncio.wait([player.websocket.send(message) for player in self.players[PlayerType.Viewer]])
