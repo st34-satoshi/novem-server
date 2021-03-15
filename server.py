@@ -20,6 +20,13 @@ def room_response(room_id, player_type):
     return json.dumps({"action": "room_link", "room_id": room_id, "player_type": player_type})
 
 
+def room_list_response():
+    message = {"action": "room_list"}
+    for room in ROOMS:
+        message[room.room_id] = room.information()
+    return json.dumps(message)
+
+
 def error_response(message=""):
     return json.dumps({"action": "error", "message": message})
 
@@ -44,6 +51,17 @@ async def send_room_link(room_id, player_type, websocket):
         return
     message = room_response(room_id, player_type)
     await asyncio.wait([websocket.send(message)])
+
+
+async def send_rooms_list(websocket=None):
+    # Send the rooms list to all players
+    # This is called when a room is created
+    # If websocket is not None, send the information to the player
+    message = room_list_response()
+    if websocket is not None:
+        await asyncio.wait([websocket.send(message)])
+    else:
+        await asyncio.wait([player.websocket.send(message) for player in PLAYERS])
 
 
 async def make_room(websocket, data):
@@ -74,15 +92,10 @@ async def make_room(websocket, data):
         send_error(websocket)
         return
 
-    # send the link to the room to websocket player
-    await room.send_playing()
-    # await send_room_link(room.room_id, player_type, websocket)
-
 
 async def register(websocket):
     PLAYERS[websocket] = Player(websocket)
     logging.info(f"add user {websocket}")
-    print("gg")
 
 
 async def unregister(websocket):
@@ -97,7 +110,7 @@ async def server(websocket, path):
     # register(websocket) sends user_event() to websocket
     await register(websocket)
     try:
-        await websocket.send(action_event())
+        await send_rooms_list(websocket)  # send the information of rooms
         async for message in websocket:  # receive message
             data = json.loads(message)
             print(f'receive data = {data}')

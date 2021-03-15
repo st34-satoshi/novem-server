@@ -18,6 +18,11 @@ class Room:
         self.board_bottom = [[1, 5, 9], [6, 7, 2], [8, 3, 4]]
         self.board_top = [[9, 5, 1], [4, 3, 8], [2, 7, 6]]
 
+    def information(self):
+        # Used for the information of room list in the Home View
+        ans = {"room_id": self.room_id, "Row": self.row_name(), "Column": self.column_name(), "Round": self.round}
+        return ans
+
     def add_player(self, player, player_type):
         if player_type == PlayerType.Viewer:
             self.players[PlayerType.Viewer].append(player)
