@@ -8,7 +8,8 @@ class Player:
     def remove(self):
         # remove this player
         # TODO: remove this player form all rooms
-        pass
+        for room in self.rooms:
+            room.remove_player(self)
 
     def join_room(self, room_id):
         self.rooms.add(room_id)

@@ -18,6 +18,14 @@ class Room:
         self.board_bottom = [[1, 5, 9], [6, 7, 2], [8, 3, 4]]
         self.board_top = [[9, 5, 1], [4, 3, 8], [2, 7, 6]]
 
+    def remove_player(self, player):
+        if self.players[PlayerType.Row] is player:
+            self.players[PlayerType.Row] = None
+        if self.players[PlayerType.Column] is player:
+            self.players[PlayerType.Column] = None
+        if player in self.players[PlayerType.Viewer]:
+            self.players[PlayerType.Viewer].remove(player)
+
     def information(self):
         # Used for the information of room list in the Home View
         ans = {"room_id": self.room_id, "Row": self.row_name(), "Column": self.column_name(), "Round": self.round}
@@ -33,7 +41,7 @@ class Room:
             logging.info(f"{player_type} already exists. "
                          f"The player can not join this room. {player.websocket}, {self.room_id}")
             return False
-        player.join_room(self.room_id)
+        player.join_room(self)
         return True
 
     def all_players(self):
