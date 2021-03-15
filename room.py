@@ -59,12 +59,12 @@ class Room:
     def row_name(self):
         if self.players[PlayerType.Row] is not None:
             return self.players[PlayerType.Row].name
-        return "Player"
+        return "None"
 
     def column_name(self):
         if self.players[PlayerType.Column] is not None:
             return self.players[PlayerType.Column].name
-        return "Player"
+        return "None"
 
     def playing_information(self):
         # Information: room id, board, round, point, and player name.

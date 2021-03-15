@@ -22,7 +22,7 @@ def room_response(room_id, player_type):
 
 def room_list_response():
     message = {"action": "room_list"}
-    for room in ROOMS:
+    for room in ROOMS.values():
         message[room.room_id] = room.information()
     return json.dumps(message)
 
