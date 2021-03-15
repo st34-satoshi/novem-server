@@ -3,7 +3,12 @@ class Player:
     def __init__(self, websocket):
         self.websocket = websocket  # used for id
         self.rooms = set()  # room that this player join
+        self.name = "Player"
 
     def remove(self):
         # remove this player
+        # TODO: remove this player form all rooms
         pass
+
+    def join_room(self, room_id):
+        self.rooms.add(room_id)
