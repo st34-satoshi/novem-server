@@ -89,6 +89,8 @@ async def make_room(websocket, data):
 
     # set name
     if player_name is not None:
+        if player_name is "None":  # None is not allowed
+            player_name = "None1"
         player.name = player_name
 
     # make a room
@@ -100,6 +102,9 @@ async def make_room(websocket, data):
     if not ok:
         send_error(websocket)
         return
+
+    # Send the play information
+    await room.send_playing()
 
 
 async def register(websocket):
