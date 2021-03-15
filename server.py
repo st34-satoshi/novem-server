@@ -76,11 +76,20 @@ async def make_room(websocket, data):
         await send_error(websocket)
         return
     player_handicap = data["handicap"]
+    if "name" not in data:
+        logging.error(f"No name in data when making room. {data}")
+        player_name = None
+    else:
+        player_name = data["name"]
     if websocket not in PLAYERS:
         logging.error(f"No player {websocket} when making room. {data}")
         await send_error(websocket)
         return
     player = PLAYERS[websocket]
+
+    # set name
+    if player_name is not None:
+        player.name = player_name
 
     # make a room
     room = Room(len(ROOMS)+1, player_handicap)
