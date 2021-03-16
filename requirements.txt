@@ -1,1 +1,4 @@
-websockets
+gunicorn
+requests
+Flask
+Flask-Sockets
