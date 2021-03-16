@@ -4,14 +4,12 @@ This can not be run directly because the Flask development server does not
 support web sockets. Instead, use gunicorn:
 gunicorn -b 127.0.0.1:8080 -k flask_sockets.worker main:app
 """
-# import asyncio
 import json
 import logging
 from room import Room
 from player import Player
 from player_type import PlayerType
-# import websockets
-from flask import Flask, render_template
+from flask import Flask
 from flask_sockets import Sockets
 
 logging.basicConfig(level=logging.INFO)
@@ -209,12 +207,6 @@ def server(websocket):
         else:
             logging.error(f"Unexpected action request. {data}")
     unregister(websocket)
-
-
-# start_server = websockets.serve(server, "localhost", 6789)
-#
-# asyncio.get_event_loop().run_until_complete(start_server)
-# asyncio.get_event_loop().run_forever()
 
 
 if __name__ == '__main__':

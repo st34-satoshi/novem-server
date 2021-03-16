@@ -6,8 +6,7 @@ class Player:
         self.name = "Player"
 
     def remove(self):
-        # remove this player
-        # TODO: remove this player form all rooms
+        # remove this player form all rooms
         for room in self.rooms:
             room.remove_player(self)
 
