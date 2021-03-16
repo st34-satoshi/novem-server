@@ -9,7 +9,7 @@ import logging
 from room import Room
 from player import Player
 from player_type import PlayerType
-from flask import Flask
+from flask import Flask, render_template
 from flask_sockets import Sockets
 
 logging.basicConfig(level=logging.INFO)
@@ -207,6 +207,12 @@ def server(websocket):
         else:
             logging.error(f"Unexpected action request. {data}")
     unregister(websocket)
+
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
 
 
 if __name__ == '__main__':
