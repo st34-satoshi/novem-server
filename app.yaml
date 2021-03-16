@@ -1,0 +1,13 @@
+# reference: https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/appengine/flexible/websockets/app.yaml
+
+runtime: python
+env: flex
+service: default
+# Use a special gunicorn worker class to support websockets.
+entrypoint: gunicorn -b :$PORT -k flask_sockets.worker server:app
+runtime_config:
+  python_version: 3
+manual_scaling:
+  instances: 1
+#network:
+#  session_affinity: true
