@@ -1,6 +1,5 @@
 from player_type import PlayerType
 import logging
-import asyncio
 import json
 
 
@@ -92,18 +91,19 @@ class Room:
                            "column_name": self.column_name(),
                            "type": player_type})
 
-    async def send_playing(self):
+    def send_playing(self):
         # Send all information of this state to all players in this room.
         # Information: room id, board, round, point, and player name.
         if self.players[PlayerType.Row] is not None:
-            await asyncio.wait([self.players[PlayerType.Row].websocket.send(self.playing_information("Row"))])
+            self.players[PlayerType.Row].websocket.send(self.playing_information("Row"))
         if self.players[PlayerType.Column] is not None:
-            await asyncio.wait([self.players[PlayerType.Column].websocket.send(self.playing_information("Column"))])
+            self.players[PlayerType.Column].websocket.send(self.playing_information("Column"))
         message = self.playing_information("Viewer")
         if len(self.players[PlayerType.Viewer]) > 0:
-            await asyncio.wait([player.websocket.send(message) for player in self.players[PlayerType.Viewer]])
+            for player in self.players[PlayerType.Viewer]:
+                player.websocket.send(message)
 
-    async def next_action(self, player, action):
+    def next_action(self, player, action):
         """
         :param player:
         :param action: r3, r2, ..., c1.
@@ -157,4 +157,4 @@ class Room:
             self.row_action = None
             self.column_action = None
             # broadcast
-            await self.send_playing()
+            self.send_playing()

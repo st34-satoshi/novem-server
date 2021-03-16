@@ -50,26 +50,26 @@ def send_error(websocket, message=""):
 # def play_action(websocket, data):
 #     if "room_id" not in data:
 #         logging.error(f"No room id in data when next action. {data}")
-#         await send_error(websocket, "no room id")
+#         send_error(websocket, "no room id")
 #         return
 #     room_id = data["room_id"]
 #     if "play_action" not in data:
 #         logging.error(f"No play action in data when next action. {data}")
-#         await send_error(websocket, "no play_action")
+#         send_error(websocket, "no play_action")
 #         return
 #     action = data["play_action"]
 #
 #     if room_id not in ROOMS:
-#         await send_error(websocket, "room id is wrong")
+#         send_error(websocket, "room id is wrong")
 #         return
 #     room = ROOMS[room_id]
 #     if websocket not in PLAYERS:
-#         await send_error(websocket, "No player")
+#         send_error(websocket, "No player")
 #         logging.error("This player does not exist.")
 #         return
 #     player = PLAYERS[websocket]
 #
-#     await room.next_action(player, action)
+#     room.next_action(player, action)
 
 
 # def send_rooms_list(websocket=None):
@@ -78,9 +78,9 @@ def send_error(websocket, message=""):
 #     # If websocket is not None, send the information to the player
 #     message = room_list_response()
 #     if websocket is not None:
-#         await asyncio.wait([websocket.send(message)])
+#         asyncio.wait([websocket.send(message)])
 #     else:
-#         await asyncio.wait([player.websocket.send(message) for player in PLAYERS])
+#         asyncio.wait([player.websocket.send(message) for player in PLAYERS])
 
 
 def make_room(websocket, data):
@@ -89,54 +89,53 @@ def make_room(websocket, data):
         logging.error(f"No player_type in data when making room. {data}")
         send_error(websocket)
         return
-    send_error(websocket, "ok")
-    # player_type = PlayerType(data["player_type"])
-    # if "handicap" not in data:
-    #     logging.error(f"No handicap in data when making room. {data}")
-    #     await send_error(websocket)
-    #     return
-    # player_handicap = data["handicap"]
-    # if "name" not in data:
-    #     logging.error(f"No name in data when making room. {data}")
-    #     player_name = None
-    # else:
-    #     player_name = data["name"]
-    # if websocket not in PLAYERS:
-    #     logging.error(f"No player {websocket} when making room. {data}")
-    #     await send_error(websocket)
-    #     return
-    # player = PLAYERS[websocket]
-    #
-    # # set name
-    # if player_name is not None:
-    #     if player_name == "None":  # None is not allowed
-    #         player_name = "None1"
-    #     player.name = player_name
-    #
-    # # make a room
-    # room = Room(str(len(ROOMS)+1), player_handicap)
-    # ROOMS[room.room_id] = room
-    #
-    # # add the player to the room
-    # ok = room.add_player(player, player_type)
-    # if not ok:
-    #     send_error(websocket)
-    #     return
-    #
-    # # Send the play information
-    # await room.send_playing()
+    player_type = PlayerType(data["player_type"])
+    if "handicap" not in data:
+        logging.error(f"No handicap in data when making room. {data}")
+        send_error(websocket)
+        return
+    player_handicap = data["handicap"]
+    if "name" not in data:
+        logging.error(f"No name in data when making room. {data}")
+        player_name = None
+    else:
+        player_name = data["name"]
+    if websocket not in PLAYERS:
+        logging.error(f"No player {websocket} when making room. {data}")
+        send_error(websocket)
+        return
+    player = PLAYERS[websocket]
+
+    # set name
+    if player_name is not None:
+        if player_name == "None":  # None is not allowed
+            player_name = "None1"
+        player.name = player_name
+
+    # make a room
+    room = Room(str(len(ROOMS)+1), player_handicap)
+    ROOMS[room.room_id] = room
+
+    # add the player to the room
+    ok = room.add_player(player, player_type)
+    if not ok:
+        send_error(websocket)
+        return
+
+    # Send the play information
+    room.send_playing()
 
 
 # def join_room(websocket, data):
 #     # handle data
 #     if "player_type" not in data:
 #         logging.error(f"No player_type in data when joining room. {data}")
-#         await send_error(websocket)
+#         send_error(websocket)
 #         return
 #     player_type = PlayerType(data["player_type"])
 #     if "room_id" not in data:
 #         logging.error(f"No room id in data when joining room. {data}")
-#         await send_error(websocket)
+#         send_error(websocket)
 #         return
 #     room_id = data["room_id"]
 #     if "name" not in data:
@@ -146,7 +145,7 @@ def make_room(websocket, data):
 #         player_name = data["name"]
 #     if websocket not in PLAYERS:
 #         logging.error(f"No player {websocket} when joining room. {data}")
-#         await send_error(websocket)
+#         send_error(websocket)
 #         return
 #     player = PLAYERS[websocket]
 #
@@ -158,7 +157,7 @@ def make_room(websocket, data):
 #
 #     if room_id not in ROOMS:
 #         logging.error(f"No room id in ROOMS when joining room. {data}")
-#         await send_error(websocket, "no room id in Rooms joining room")
+#         send_error(websocket, "no room id in Rooms joining room")
 #         return
 #     room = ROOMS[room_id]
 #
@@ -169,7 +168,7 @@ def make_room(websocket, data):
 #         return
 #
 #     # Send the play information
-#     await room.send_playing()
+#     room.send_playing()
 
 
 def register(websocket):
@@ -203,9 +202,9 @@ def server(websocket):
         if data["action"] == "make-room":
             make_room(websocket, data)
         # elif data["action"] == "join-room":
-        #     await join_room(websocket, data)
+        #     join_room(websocket, data)
         # elif data["action"] == "play-action":
-        #     await play_action(websocket, data)
+        #     play_action(websocket, data)
         else:
             logging.error(f"Unexpected action request. {data}")
     unregister(websocket)
