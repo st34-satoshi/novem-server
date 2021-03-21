@@ -16,3 +16,4 @@ Novem server for playing
 
 #### check your GCP project list
 - `gcloud projects list`
+- `gcloud app versions list`
