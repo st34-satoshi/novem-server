@@ -14,6 +14,9 @@ Novem server for playing
 1. Create you GCP project
 2. `gcloud app deploy --project <project ID>`
 
+### Deploy on VPS
+1. `sudo gunicorn -b :PORT -k flask_sockets.worker server:app`
+
 #### check your GCP project list
 - `gcloud projects list`
 - `gcloud app versions list`
