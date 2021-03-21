@@ -1,0 +1,135 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Play Novem</title>
+  <meta name="description" content="Play Novem">
+  <meta name="author" content="Satoshi Tanaka">
+  <meta name="keywords" content="play,board game,game,novem">
+  <style type="text/css">
+    td.black_cell{
+      border-top-color:black;
+      border-left-color:black;
+    }
+    td.black_cell_r{
+      border-top-color:black;
+      border-right-color:black;
+      border-left-color:black;
+    }
+    td.black_cell_b{
+      border-top-color:black;
+      border-bottom-color:black;
+      border-left-color:black;
+    }
+    td.black_cell_br{
+      border-top-color:black;
+      border-bottom-color:black;
+      border-right-color:black;
+      border-left-color:black;
+    }
+  </style>
+  <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="index.js"></script>
+</head>
+
+<body>
+  <h1>Play Novem</h1>
+
+  <div id="home-view">
+  <h2>Home</h2>
+  <h3>Make a Room</h3>
+  Enter your name, Row/Column, and handicap. <br>
+  <input type="text" id="player-name" placeholder="Your Name" required minlength="1" maxlength="18" size="10">
+  <select id="player-type">
+    <option value="Row">Row Player</option>
+    <option value="Column">Column Player</option>
+  </select>
+  <select id="player-handicap">
+    <option value="-5">-5</option>
+    <option value="-4">-4</option>
+    <option value="-3" selected>-3</option>
+    <option value="-2">-2</option>
+    <option value="-1">-1</option>
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+  </select>
+  <br>
+  <button onclick="makeRoomRequest()">make a room</button>
+
+  <h3>Join a Room</h3>
+  Enter your name, room id, and Row/Column/Viewer. <br>
+  <input type="text" id="join-player-name" placeholder="Your Name" required minlength="1" maxlength="18" size="10">
+  <select id="join-player-type">
+    <option value="Row">Row Player</option>
+    <option value="Column">Column Player</option>
+    <option value="Viewer" selected>Viewer</option>
+  </select>
+  <select id="join-room-id"></select>
+  <br>
+  <button onclick="joinRoomRequest()">join</button>
+
+
+  <h3>Room List</h3>
+  <!-- created using javascript -->
+  <ul id="room_list"></ul>
+
+  <!-- end of home view -->
+  </div>
+
+  <!-- When playing, change to display -->
+  <div id="playing-view" style="display:none">
+  <!-- <div id="playing-view" style="display:block"> -->
+
+  <h2>Playing</h2>
+  <div id="playing-room-id"></div>
+  <div id="playing-type">You are a player.</div>
+  <div id="playing-rc"><strong>Select a Row.</strong></div>
+  <div id="playing-round">Round: 1</div>
+  <div id="playing-turn">You are Attacking</div>
+  <div id="point-r">Your point = 0</div>
+  <div id="point-c">Opponent point = 0</div>
+
+
+  <div id="board">
+    <table border="1" width="350" height="350" cellspacing="0" cellpadding="5" bordercolor="white">
+      <tr id="board-head" align="center">
+      <td width="50"></td>
+      <td width="100"><button onclick="buttonClick('c', '1')">c1</button></td>
+      <td width="100"><button onclick="buttonClick('c', '2')">c2</button></td>
+      <td width="100"><button onclick="buttonClick('c', '3')">c3</button></td>
+      </tr>
+      <tr id="row1" align="center" height="100">
+      <td><button onclick="buttonClick('r', '1')">r1</button></td>
+      <td class="black_cell" id="cell00"></td>
+      <td class="black_cell" id="cell01"></td>
+      <td class="black_cell_r" id="cell02"></td>
+      </tr>
+      <tr id="row2" align="center" height="100">
+      <td><button onclick="buttonClick('r', '2')">r2</button></td>
+      <td class="black_cell" id="cell10"></td>
+      <td class="black_cell" id="cell11"></td>
+      <td class="black_cell_r" id="cell12"></td>
+      </tr>
+      <tr id="row3" align="center" height="100">
+      <td><button onclick="buttonClick('r', '3')">r3</button></td>
+      <td class="black_cell_b" id="cell20"></td>
+      <td class="black_cell_b" id="cell21"></td>
+      <td class="black_cell_br" id="cell22"></td>
+      </tr>
+      </table>
+  </div>
+
+  <!-- <div id="draw"><button>Draw</button></div> -->
+  <hr>
+  <div id="waiting">
+    <img src="load.gif" width="30" height="30" alt="Loading..." /><br>
+    Waiting for the opponen action.
+  </div>
+
+  <!-- end of playing view -->
+  </div>
+
+</body>
+</html>
