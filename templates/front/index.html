@@ -30,7 +30,7 @@
     }
   </style>
   <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
-  <script type="text/javascript" src="index.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
 </head>
 
 <body>
@@ -124,7 +124,7 @@
   <!-- <div id="draw"><button>Draw</button></div> -->
   <hr>
   <div id="waiting">
-    <img src="load.gif" width="30" height="30" alt="Loading..." /><br>
+    <img src="{{ url_for('static', filename='load.gif') }}" width="30" height="30" alt="Loading..." /><br>
     Waiting for the opponen action.
   </div>
 

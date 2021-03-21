@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 PLAYERS = {}  # {websocket: Player}
 ROOMS = {}  # {room id: Room}
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='templates/front')
 sockets = Sockets(app)
 
 
@@ -183,7 +183,7 @@ def unregister(websocket):
     remove_player.remove()
 
 
-@sockets.route('/')
+@sockets.route('/ws-novem')
 def server(websocket):
     # register(websocket) sends user_event() to websocket
     register(websocket)
@@ -213,6 +213,10 @@ def server(websocket):
 def index():
     return render_template('index.html')
 
+
+@app.route('/play-novem')
+def play_novem():
+    return render_template('front/index.html')
 
 
 if __name__ == '__main__':

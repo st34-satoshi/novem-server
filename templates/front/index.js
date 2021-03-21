@@ -169,8 +169,16 @@ function switchToPlayingView(data){
 }
 
 // websocket
-var websocket = new WebSocket("ws://153.126.167.150:443/");
+var scheme = window.location.protocol == "https:" ? 'wss://' : 'ws://';
+var websocketURI = scheme
+                 + window.location.hostname
+                 + (location.port ? ':'+location.port: '')
+                 + '/ws-novem';
+
+//var websocket = new WebSocket("ws://153.126.167.150:443/");
 // var websocket = new WebSocket("ws://127.0.0.1:8080/");  // local
+ var websocket = new WebSocket(websocketURI);  // local
+ console.log(websocket);
 
 // send messages
 function makeRoomRequest() {
