@@ -20,6 +20,8 @@ class Room:
         # next action. action is 0, 1, or 2. This is the index.
         self.row_action = None
         self.column_action = None
+        self.previous_row_action = None
+        self.previous_column_action = None
 
     def is_terminal(self):
         for i in range(3):
@@ -101,7 +103,9 @@ class Room:
                            "row_name": self.row_name(),
                            "column_name": self.column_name(),
                            "is_terminal": self.is_terminal(),
-                           "type": player_type})
+                           "type": player_type,
+                           "previous_row_action": self.previous_row_action,
+                           "previous_column_action": self.previous_column_action})
 
     def send_playing(self):
         # Send all information of this state to all players in this room.
@@ -171,6 +175,8 @@ class Room:
             # update the round
             self.round += 1
             # reset next action
+            self.previous_row_action = self.row_action
+            self.previous_column_action = self.column_action
             self.row_action = None
             self.column_action = None
             # broadcast
