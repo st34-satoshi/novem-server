@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 PLAYERS = {}  # {websocket: Player}
 ROOMS = {}  # {room id: Room}
+ROOM_COUNTER = 0
 
 app = Flask(__name__, static_folder='templates/front')
 sockets = Sockets(app)
@@ -112,7 +113,9 @@ def make_room(websocket, data):
         player.name = player_name
 
     # make a room
-    room = Room(str(len(ROOMS)+1), player_handicap)
+    global ROOM_COUNTER
+    ROOM_COUNTER += 1
+    room = Room(str(ROOM_COUNTER), player_handicap)
     ROOMS[room.room_id] = room
 
     # add the player to the room
