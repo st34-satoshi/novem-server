@@ -182,6 +182,14 @@ def unregister(websocket):
     remove_player = PLAYERS.pop(websocket)
     remove_player.remove()
 
+    # If no one use a room, remove the rome
+    remove_rooms = []
+    for room_id, room in ROOMS.items():
+        if len(room.all_players()) == 0:
+            remove_rooms.append(room_id)
+    for room_id in remove_rooms:
+        logging.info(f"remove a room: {ROOMS.pop(room_id)}")
+
 
 @sockets.route('/ws-novem')
 def server(websocket):
