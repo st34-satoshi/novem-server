@@ -21,6 +21,17 @@ class Room:
         self.row_action = None
         self.column_action = None
 
+    def is_terminal(self):
+        for i in range(3):
+            c = 0
+            r = 0
+            for j in range(3):
+                r += self.board_bottom[i][j]
+                c += self.board_bottom[j][i]
+            if c == 0 or r == 0:
+                return True
+        return False
+
     def remove_player(self, player):
         if self.players[PlayerType.Row] is player:
             self.players[PlayerType.Row] = None
@@ -89,6 +100,7 @@ class Room:
                            "column_point": self.column_point,
                            "row_name": self.row_name(),
                            "column_name": self.column_name(),
+                           "is_terminal": self.is_terminal(),
                            "type": player_type})
 
     def send_playing(self):
@@ -112,6 +124,11 @@ class Room:
         else --> ignore
         When both Row and Column actions are decided --> move to next state and broadcast
         """
+        # Terminal state do nothing
+        if self.is_terminal():
+            return
+
+        # Check if the action is acceptable
         if len(action) != 2:
             return
         # check player
