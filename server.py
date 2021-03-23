@@ -215,6 +215,8 @@ def server(websocket):
             join_room(websocket, data)
         elif data["action"] == "play-action":
             play_action(websocket, data)
+        elif data["action"] == "test":
+            pass
         else:
             logging.error(f"Unexpected action request. {data}")
     unregister(websocket)
@@ -228,6 +230,22 @@ def index():
 @app.route('/play-novem')
 def play_novem():
     return render_template('front/index.html')
+
+
+@app.route('/broadcast-hello-05a500d693676424')
+def broadcast_hello():
+    """
+    Not to lose connection, sometimes send a message to all players.
+    This is called in 30 minutes? from the other server.
+    Added random string not to called from others.  TODO: change the random string.
+    """
+    logging.debug("Broadcast hello")
+    message = {"action": "test_alive",
+               "message": "This message is sent at regular intervals. You do not need to answer."}
+    message = json.dumps(message)
+    for web in PLAYERS.keys():
+        web.send(message)
+    return "ok"
 
 
 if __name__ == '__main__':
