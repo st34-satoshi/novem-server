@@ -2,7 +2,7 @@
 Novem server for playing
 
 ## Play
-``
+Click [Play Novem](http://153.126.167.150:443/play-novem)
 
 
 ## Run
@@ -14,9 +14,9 @@ Novem server for playing
 1. Create you GCP project
 2. `gcloud app deploy --project <project ID>`
 
-### Deploy on VPS
-1. `sudo gunicorn -b :PORT -k flask_sockets.worker server:app`
-
 #### check your GCP project list
 - `gcloud projects list`
 - `gcloud app versions list`
+
+### Deploy on VPS
+1. `sudo gunicorn -b :PORT -k flask_sockets.worker server:app`
