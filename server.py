@@ -205,7 +205,7 @@ def server(websocket):
             continue
 
         data = json.loads(message)
-        print(f'receive data = {data}')
+        logging.info(f'receive data = {data}')
         if 'action' not in data:
             logging.error(f"No action in request data. {data}")
             continue
