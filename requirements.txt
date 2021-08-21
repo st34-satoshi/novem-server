@@ -2,3 +2,4 @@ gunicorn
 requests
 Flask
 Flask-Sockets
+Werkzeug==1.0.1
