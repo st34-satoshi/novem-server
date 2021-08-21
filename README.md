@@ -2,7 +2,7 @@
 Novem server for playing
 
 ## Play
-Click [Play Novem](http://153.126.167.150:443/play-novem)
+Click [Play Novem](https://novem.stu345.com/play-novem)
 
 
 ## Run
